@@ -43,3 +43,8 @@ entry("sbrk");
 entry("pause");
 entry("uptime");
 entry("sync");
+entry("getppid");
+entry("getsyscount");
+entry("clock");
+entry("null");
+entry("getswitches");

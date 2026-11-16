@@ -20,6 +20,7 @@ struct context {
 
 // Per-CPU state.
 struct cpu {
+  uint64 switches;
   struct proc *proc;      // The process running on this cpu, or null.
   struct context context; // swtch() here to enter scheduler().
   int noff;               // Depth of push_off() nesting.
@@ -81,6 +82,7 @@ enum procstate { UNUSED, USED, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 // Per-process state
 struct proc {
   struct spinlock lock;
+  int syscount;
 
   // p->lock must be held when using these:
   enum procstate state; // Process state

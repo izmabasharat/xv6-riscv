@@ -93,7 +93,6 @@ int
 allocpid()
 {
   int pid;
-
   acquire(&pid_lock);
   pid = nextpid;
   nextpid = nextpid + 1;
@@ -490,9 +489,9 @@ sched(void)
     panic("sched RUNNING");
   if (intr_get())
     panic("sched interruptible");
-
-  intena = mycpu()->intena;
-  swtch(&p->context, &mycpu()->context);
+ intena = mycpu()->intena;
+mycpu()->switches++;
+swtch(&p->context, &mycpu()->context);
   mycpu()->intena = intena;
 }
 

@@ -110,3 +110,44 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+extern struct spinlock wait_lock;
+uint64
+sys_getppid(void)
+{
+    struct proc *p = myproc();
+    int ppid = 0;
+
+    acquire(&wait_lock);
+    if(p->parent)
+        ppid = p->parent->pid;
+    release(&wait_lock);
+
+    return ppid;
+}
+uint64
+sys_getsyscount(void)
+{
+    return myproc()->syscount;
+}
+uint64
+sys_clock(void)
+{
+    return r_time();
+}
+uint64
+sys_null(void)
+{
+    return 0;
+}
+extern struct cpu cpus[NCPU];
+
+uint64
+sys_getswitches(void)
+{
+    uint64 total = 0;
+
+    for(int i = 0; i < NCPU; i++)
+        total += cpus[i].switches;
+
+    return total;
+}

@@ -92,6 +92,11 @@ extern uint64 sys_fstat(void);
 extern uint64 sys_chdir(void);
 extern uint64 sys_dup(void);
 extern uint64 sys_getpid(void);
+extern uint64 sys_getppid(void);
+extern uint64 sys_getsyscount(void);
+extern uint64 sys_clock(void);
+extern uint64 sys_null(void);
+extern uint64 sys_getswitches(void);
 extern uint64 sys_sbrk(void);
 extern uint64 sys_pause(void);
 extern uint64 sys_uptime(void);
@@ -108,6 +113,11 @@ extern uint64 sys_sync(void);
 // to the function that handles the system call.
 static uint64 (*syscalls[])(void) = {
   // clang-format off
+  [SYS_getppid] = sys_getppid,
+  [SYS_getsyscount] = sys_getsyscount,
+  [SYS_clock] = sys_clock,
+  [SYS_null] = sys_null,
+  [SYS_getswitches] = sys_getswitches,
   [SYS_fork]    = sys_fork,
   [SYS_exit]    = sys_exit,
   [SYS_wait]    = sys_wait,
@@ -141,6 +151,7 @@ syscall(void)
 
   num = p->trapframe->a7;
   if (num > 0 && num < NELEM(syscalls) && syscalls[num]) {
+    p->syscount++;
     // Use num to lookup the system call function for num, call it,
     // and store its return value in p->trapframe->a0
     p->trapframe->a0 = syscalls[num]();
